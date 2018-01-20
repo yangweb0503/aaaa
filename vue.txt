@@ -1,0 +1,147 @@
+一、什么是vue
+1.1  vue的基本概念
+vue是一套用于构建用户界面的渐进式框架。vue被设计为可以自底向上逐层应用，vue的核心库只关注视图层，在与第三方库或既有项目整合的时候非常便利，另一方面，当与现代化的工具链以及各种支持类库结合使用时，vue也完全能后为复杂的单页面应用提供驱动。
+
+1.2  构建vue
+新建vue实例：
+var  app  =  new  Vue({
+el:"#app",
+data:{
+},
+computed:{
+// 计算属性        效率高    必须要有返回值
+},
+methods:{
+//   方法       便于操作
+},
+wacth:{
+//   监听
+}
+}) 
+
+
+二、事件
+
+2.1阻止冒泡：
+函数内部阻止事件冒泡：e.cancelBubble = true;
+标签内阻止事件冒泡：@click.stop = "foo()"
+2.2键盘事件 
+获取键盘码  keyCode
+绑定键盘事件：@keyup.13 = "foo1()"            @keyup.enter = "foo1()"
+
+三、生命周期钩子函数
+beforeCreate   在实例初始化之后，数据观测（data observer）和event/watcher事件之前被调用
+creat  实例创建完成之后
+beforeMount  在挂载开始之前，该钩子在服务器端渲染期间不被调用
+mount  挂载到实例上去之后调用该钩子，该钩子在服务器端渲染期间不被调用
+beforeUptate   数据更新时，该钩子在服务器端渲染期间不被调用
+updated  数据更新后
+beforeDestroy  实例销毁之前
+destroy  实例销毁之后
+actived   keep-alive 组件激活时调用。
+deactived  keep-alive 组件停用时调用。
+
+三、组件传值
+父到子        属性（props）
+子到父        事件
+非父子         一方负责监听，另一方负责发布
+$emit ---- 发布       $on ---- 监听
+监听一般都在组件装载（mounted）时就会自动执行
+事件名称要与监听的一致 
+Vue.prototype.$bus = nuw Vue()
+在整个全局范围内就可以使用this.$bus.emit()和this.$bus.$on() 进行组件通讯
+
+    Vue.prototype.$bus = new Vue();
+	  
+	<script>	  
+	  var Header = {
+	    template: `<header>
+	                     {{title}}
+	             </header>`,
+       data(){
+         return {
+           title: "首页"
+         }
+       },
+	    mounted(){
+	      var that = this;
+	      this.$bus.$on("my-event",function(data){
+	        that.title = data
+	      })
+	    }
+	  };
+	  var Content = {
+      template: `<div class="content">
+                      内容
+               </div>`
+    };
+	  var Footer = {
+      template: `<footer>
+                 <ul>
+                    <li @click = "changePage(0)">首页</li>
+                    <li @click = "changePage(1)">分类</li>
+                    <li @click = "changePage(2)">购物车</li>
+                    <li @click = "changePage(3)">我的</li>
+                 </ul>
+               </footer>`,
+      methods:{
+        changePage(id) {
+          var type = "首页"
+          switch (id){
+          	case 0:
+          	 type = "首页"
+          	 //首页
+          		break;
+          	case 1:
+          	type = "分类"
+             //分类
+              break;
+            case 2:
+            type = "购物车"
+             //购物车
+              break;
+            case 3:
+            type = "我的"
+             //我的
+              break;
+          	default:
+          		break;
+          }
+          console.log(type)
+          this.$bus.$emit("my-event",type)
+        }
+      }
+    };
+		var app = new Vue({
+		  el:"#app",
+		  data:{
+		    
+		  },
+		  components:{
+		    "v-header": Header,
+		    "v-content": Content,
+		    "v-footer": Footer
+		  },
+		  methods:{
+		    
+		  },
+		  computed:{
+		    
+		  },
+		  watch:{
+		    
+		  }
+		})
+	</script>
+
+
+
+
+
+
+
+
+
+
+
+
